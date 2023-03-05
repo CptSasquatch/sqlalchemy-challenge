@@ -14,11 +14,11 @@ import datetime as dt
 engine = create_engine("sqlite:///Resources/hawaii.sqlite")
 # reflect an existing database into a new model
 Base = automap_base()
-Base.prepare(engine, reflect=True)
+Base.prepare(autoload_with=engine, reflect=True)
 # Save references to each table
 measurement = Base.classes.measurement
 station = Base.classes.station
-# Create our session (link) from Python to the DB
+# Create session (link) from Python to the DB
 session = Session(engine)
 # Calculate the date one year from the last date in data set.
 query_date = dt.date(2017,8,23) - dt.timedelta(days=365)
@@ -68,8 +68,8 @@ def index():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/<start><br/>"
-        f"/api/v1.0/<start>/<end><br/>"
+        f"/api/v1.0/yyyy-mm-dd<br/>"
+        f"/api/v1.0/yyyy-mm-dd/yyyy-mm-dd<br/>"
     )
 
 
