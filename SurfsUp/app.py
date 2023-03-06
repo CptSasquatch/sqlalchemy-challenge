@@ -18,8 +18,16 @@ Base.prepare(autoload_with=engine, reflect=True)
 # Save references to each table
 measurement = Base.classes.measurement
 station = Base.classes.station
+# Create our session (link) from Python to the DB
+session = Session(bind=engine)
+# Find the most recent date in the data set.
+last_date_row = session.query(measurement.date).order_by(measurement.date.desc()).first()
+# create variable for the most recent date
+last_date = dt.date.fromisoformat(last_date_row[0])
 # Calculate the date one year from the last date in data set.
-query_date = dt.date(2017,8,23) - dt.timedelta(days=365)
+query_date = last_date - dt.timedelta(days=365)
+# close session
+session.close()
 
 # design a Flask API based on the queries that you have just developed.
 # create an app
