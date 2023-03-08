@@ -101,25 +101,25 @@ def tobs():
 def start(start):
     # create session (link) from Python to the DB
     session = Session(bind=engine)
-    # Query the dates and temperature observations
-    all_temp = session.query(measurement.date, measurement.tobs).all()
-    # convert rows to dictionary for given start date
-    tobs_start_dict = {all_temp[i][0]: all_temp[i][1] for i in range(len(all_temp)) if all_temp[i][0] >= start}
+    # Query for the minimum temperature, the average temperature, and the maximum temperature for a specified start date
+    temp_data = session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).filter(measurement.date >= start).all()
+    # Create a dictionary from the row data and add key/value pairs
+    temp_dict = {"Minimum Temperature": temp_data[0][0], "Average Temperature": temp_data[0][1], "Maximum Temperature": temp_data[0][2]}
     # close session
     session.close()
-    return jsonify(tobs_start_dict)
+    return jsonify(temp_dict)
 # design start/end route
 @app.route("/api/v1.0/<start>/<end>")
 def start_end(start, end):
     # create session (link) from Python to the DB
     session = Session(bind=engine)
-    # Query the dates and temperature observations
-    all_temp = session.query(measurement.date, measurement.tobs).all()
-    # convert rows to dictionary for given start and end date
-    tobs_start_end_dict = {all_temp[i][0]: all_temp[i][1] for i in range(len(all_temp)) if all_temp[i][0] >= start and all_temp[i][0] <= end}
+    # Query for the minimum temperature, the average temperature, and the maximum temperature for a specified start and end date
+    temp_data = session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs)).filter(measurement.date >= start).filter(measurement.date <= end).all()
+    # Create a dictionary from the row data and add key/value pairs
+    temp_dict = {"Minimum Temperature": temp_data[0][0], "Average Temperature": temp_data[0][1], "Maximum Temperature": temp_data[0][2]}
     # close session
     session.close()
-    return jsonify(tobs_start_end_dict)
+    return jsonify(temp_dict)
 
 if __name__ == "__main__":
     app.run(debug=True)
